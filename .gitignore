@@ -1,0 +1,17 @@
+# NetBeans/Ant build artifacts
+/build/
+/dist/
+
+# NetBeans specific
+/nbproject/private/
+/.nb-gradle/
+/.nb-gradle-properties
+
+# Project libs (downloaded locally)
+/lib/*.jar
+
+# OS specific
+Thumbs.db
+.DS_Store
+
+

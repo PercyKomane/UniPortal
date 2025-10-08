@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="UniversityPortal" default="war" basedir=".">
+    <description>Builds and packages the UniversityPortal web application (WAR).</description>
+
+    <!-- Basic properties for standalone Ant usage -->
+    <property name="src.dir" value="src"/>
+    <property name="test.src.dir" value="test"/>
+    <property name="web.dir" value="web"/>
+    <property name="webinf.dir" value="${web.dir}/WEB-INF"/>
+    <property name="build.dir" value="build"/>
+    <property name="build.web.dir" value="${build.dir}/web"/>
+    <property name="build.webinf.dir" value="${build.web.dir}/WEB-INF"/>
+    <property name="build.classes.dir" value="${build.webinf.dir}/classes"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="dist.war" value="${dist.dir}/UniversityPortal.war"/>
+    <property name="servlet.api.jar" value="lib/jakarta.servlet-api-5.0.0.jar"/>
+    <property name="h2.jar" value="lib/h2-2.2.224.jar"/>
+    <property name="mysql.jar" value="lib/mysql-connector-j-8.4.0.jar"/>
+    <property name="manifest.file" value="manifest.mf"/>
+
+    <!-- When opened in NetBeans, this file will be generated and override local targets -->
+    <import file="nbproject/build-impl.xml" optional="true"/>
+
+    <!-- Standalone Ant targets (used if build-impl.xml is not present) -->
+    <target name="init">
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${build.web.dir}"/>
+        <mkdir dir="${build.webinf.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${build.classes.dir}" includeantruntime="false" source="17" target="17" debug="true">
+            <!-- Add your servlet-api or jakarta servlet jar to the classpath when building outside NetBeans -->
+            <classpath>
+                <fileset dir="lib" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="get-servlet-api">
+        <mkdir dir="lib"/>
+        <get src="https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/5.0.0/jakarta.servlet-api-5.0.0.jar" dest="${servlet.api.jar}" skipexisting="true"/>
+        <echo message="Downloaded ${servlet.api.jar}"/>
+    </target>
+
+    <target name="get-h2">
+        <mkdir dir="lib"/>
+        <get src="https://repo1.maven.org/maven2/com/h2database/h2/2.2.224/h2-2.2.224.jar" dest="${h2.jar}" skipexisting="true"/>
+        <echo message="Downloaded ${h2.jar}"/>
+    </target>
+
+    <target name="get-mysql">
+        <mkdir dir="lib"/>
+        <get src="https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.4.0/mysql-connector-j-8.4.0.jar" dest="${mysql.jar}" skipexisting="true"/>
+        <echo message="Downloaded ${mysql.jar}"/>
+    </target>
+
+    <target name="get-deps" depends="get-servlet-api,get-h2,get-mysql"/>
+
+    <target name="copy-web" depends="init">
+        <!-- Copy all web content (JSP, HTML, CSS, JS, etc.) -->
+        <copy todir="${build.web.dir}">
+            <fileset dir="${web.dir}" excludes="WEB-INF/**"/>
+        </copy>
+        <!-- Copy WEB-INF (except web.xml which is handled explicitly in war task) -->
+        <copy todir="${build.webinf.dir}">
+            <fileset dir="${webinf.dir}" excludes="web.xml" erroronmissingdir="false"/>
+        </copy>
+    </target>
+
+    <target name="war" depends="compile,copy-web">
+        <war destfile="${dist.war}" webxml="${webinf.dir}/web.xml" basedir="${build.web.dir}">
+            <!-- Do not include servlet API in WAR; container provides it -->
+            <lib dir="lib" includes="**/*.jar" excludes="jakarta.servlet-api-*.jar,javax.servlet-api-*.jar"/>
+        </war>
+        <echo message="WAR created at ${dist.war}"/>
+    </target>
+
+    <!-- Make NetBeans Run action succeed by building the WAR -->
+    <target name="run" depends="war">
+        <echo message="WAR built: ${dist.war}. Deploy it to your servlet container (Tomcat)."/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+</project>
+
+

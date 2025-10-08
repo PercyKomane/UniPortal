@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         version="5.0"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
+
+    <display-name>UniversityPortal</display-name>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- Database configuration (override defaults from ConnectionFactory) -->
+    <context-param>
+        <param-name>db.url</param-name>
+        <param-value>jdbc:mysql://localhost:3306/university?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</param-value>
+    </context-param>
+    <context-param>
+        <param-name>db.user</param-name>
+        <param-value>uni_user</param-value>
+    </context-param>
+    <context-param>
+        <param-name>db.password</param-name>
+        <param-value>change_me!</param-value>
+    </context-param>
+
+    <!-- Ensure listener is registered even if annotation scanning is disabled -->
+    <listener>
+        <listener-class>com.university.portal.web.StartupListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>CourseServlet</servlet-name>
+        <servlet-class>com.university.portal.web.CourseServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CourseServlet</servlet-name>
+        <url-pattern>/courses</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StudentServlet</servlet-name>
+        <servlet-class>com.university.portal.web.StudentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StudentServlet</servlet-name>
+        <url-pattern>/student</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FacultyServlet</servlet-name>
+        <servlet-class>com.university.portal.web.FacultyServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FacultyServlet</servlet-name>
+        <url-pattern>/faculty</url-pattern>
+    </servlet-mapping>
+
+</web-app>
+
+
